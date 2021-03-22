@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}Issue Tracker{% endblock %}
+{% block menu_links %}
+    {% if perms.accounts.can_view_user_list %}
+{#        <li class="nav-item active">#}
+{#            <a class="nav-link" href="{% url 'accounts:list' %}">User list</a>#}
+{#        </li>#}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<h1>fffffffffff</h1>
+{% endblock %}

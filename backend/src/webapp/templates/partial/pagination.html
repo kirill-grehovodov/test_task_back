@@ -1,0 +1,25 @@
+<div class="d-flex justify-content-center">
+    <div class="pagination mb-2">
+        <span class="step-links">
+            <a class="btn btn-primary" href="?{% if query %}{{ query }}&{% endif %}page=1">&laquo; First</a>
+            {% if page_obj.has_previous %}
+                <a class="btn btn-primary"  href="?{% if query %}{{ query }}&{% endif %}page={{ page_obj.previous_page_number }}">Back</a>
+            {% else %}
+                <span class="btn btn-secondary disabled" aria-disabled="true">Back</span>
+            {% endif %}
+            <form class="current-page" method="get">
+                <label for="page">
+                    {% if search %}<input type="hidden" name="search" value="{{ search }}">{% endif %}
+                    <span class="mx-3">Page <input type="text" name="page" id="page" value="{{ page_obj.number }}">
+                    of {{ page_obj.paginator.num_pages }}</span>
+                </label>
+            </form>
+            {% if page_obj.has_next %}
+                <a class="btn btn-primary" href="?{% if query %}{{ query }}&{% endif %}page={{ page_obj.next_page_number }}">Next</a>
+            {% else %}
+                <span class="btn btn-secondary disabled" aria-disabled="true">Next</span>
+            {% endif %}
+            <a class="btn btn-primary" href="?{% if query %}{{ query }}&{% endif %}page={{ page_obj.paginator.num_pages }}">Last &raquo;</a>
+        </span>
+    </div>
+</div>
