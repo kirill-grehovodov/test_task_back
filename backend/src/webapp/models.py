@@ -37,7 +37,7 @@ class Post(models.Model):
 
 
 class Comment(models.Model):
-    post = models.ForeignKey('webapp.Tag', related_name='comments',
+    post = models.ForeignKey('webapp.Post', related_name='comments',
                              on_delete=models.CASCADE, verbose_name='Пост')
     text = models.TextField(max_length=400, verbose_name='Комментарий')
     author = models.ForeignKey(get_user_model(), on_delete=models.SET_DEFAULT, default=1,
