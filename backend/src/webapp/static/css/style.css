@@ -1,0 +1,30 @@
+.checkbox-form {
+    padding-left: 5px;
+    padding-top: 5px;
+    margin-bottom: 3px;
+}
+
+.checkbox-form li {
+    list-style: none;
+}
+
+.pagination {
+    text-align: center;
+}
+
+.pagination a, .pagination .btn .btn-primary .btn-secondary {
+    display: inline-block;
+}
+
+.pagination .current-page {
+    display: inline-block;
+}
+
+.pagination .current-page input {
+    width: 50px;
+    padding: 5px 7px;
+    font-size: inherit;
+    border-radius: 5px;
+    text-align: center;
+    border: solid 1px gray;
+}

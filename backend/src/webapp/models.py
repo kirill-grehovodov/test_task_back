@@ -20,7 +20,7 @@ class Post(models.Model):
     text = models.TextField(max_length=3000, null=False, blank=False, verbose_name='Текст',
                             validators=[MinLengthValidator(3)])
     author = models.ForeignKey(get_user_model(), on_delete=models.SET_DEFAULT, default=1,
-                               related_name='tasks', verbose_name='Автор')
+                               related_name='posts', verbose_name='Автор')
     tags = models.ManyToManyField('webapp.Tag', related_name='tags', blank=True, verbose_name='Теги')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Время создания')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Время изменения')

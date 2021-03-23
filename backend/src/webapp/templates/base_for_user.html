@@ -9,5 +9,23 @@
 {% endblock %}
 
 {% block content %}
-<h1>fffffffffff</h1>
+<div>
+    {% for user in users %}
+        <h5>{{ user.username }}</h5>
+    {% empty %}
+        <h3>No users</h3>
+    {% endfor %}
+
+    {% for post in posts %}
+        <h5>{{ post.title }}</h5>
+    {% empty %}
+        <h3>No posts</h3>
+    {% endfor %}
+
+    {% for tag in tags %}
+        <h5>{{ tag.name }}</h5>
+    {% empty %}
+        <h3>No tags</h3>
+    {% endfor %}
+</div>
 {% endblock %}
