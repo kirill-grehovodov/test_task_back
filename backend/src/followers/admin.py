@@ -1,3 +1,7 @@
 from django.contrib import admin
+from src.followers.models import FollowerUser, FollowerTag, FollowerCountry
 
-# Register your models here.
+
+admin.site.register(FollowerUser)
+admin.site.register(FollowerTag)
+admin.site.register(FollowerCountry)

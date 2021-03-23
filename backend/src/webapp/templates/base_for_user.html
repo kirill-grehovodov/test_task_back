@@ -10,19 +10,20 @@
 
 {% block content %}
 <div>
-    {% for user in users %}
-        <h5>{{ user.username }}</h5>
+    <h6>Топ 5 пользователей:</h6>
+    {% for user in main_users %}
+        <p>{{ user.username }}</p>
     {% empty %}
         <h3>No users</h3>
     {% endfor %}
-
-    {% for post in posts %}
-        <h5>{{ post.title }}</h5>
+    <h6>Новые посты:</h6>
+    {% for post in main_posts %}
+        <p>{{ post.title }}</p>
     {% empty %}
         <h3>No posts</h3>
     {% endfor %}
-
-    {% for tag in tags %}
+    <h6>Теги:</h6>
+    {% for tag in main_tags %}
         <h5>{{ tag.name }}</h5>
     {% empty %}
         <h3>No tags</h3>

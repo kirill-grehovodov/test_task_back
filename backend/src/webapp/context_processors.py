@@ -9,4 +9,4 @@ def general_information(request):
     posts = Post.objects.order_by('-created_at')[:3]
     tags = Tag.objects.all()
     users = User.objects.annotate(total_rating=Sum('posts__rating')).order_by('-total_rating')[:5]
-    return {'posts': posts, 'tags': tags, 'users': users}
+    return {'main_posts': posts, 'main_tags': tags, 'main_users': users}
