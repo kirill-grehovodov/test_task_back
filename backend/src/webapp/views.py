@@ -22,12 +22,16 @@ class IndexView(ListView):
         # if self.request.user.groups.filter(name__in=['Team Lead', 'Project Manager']):
         #     context['user_list_perm'] = True
         # context['form'] = self.form
-        # if self.search_value:
-        #     context['query'] = urlencode({'search': self.search_value})
+
         return context
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        if self.request.user.is_authenticated():
+            pass
+            # Пользователь авторизован.
+        else:
+            queryset = queryset.order_by('-created_at')[:10]
         # if self.search_value:
         #     query = Q(name__icontains=self.search_value) | Q(description__icontains=self.search_value)
         #     queryset = queryset.filter(query)
