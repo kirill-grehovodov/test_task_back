@@ -26,7 +26,8 @@ class Post(models.Model):
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Время изменения')
     rating = models.IntegerField(verbose_name="Счётчик лайков", default=0)
     is_locked = models.BooleanField(default=False)
-    country_code = models.CharField(max_length=200, choices=get_countries('https://restcountries.eu/rest/v2/all'), verbose_name='Страна')
+    country_code = models.CharField(max_length=200, choices=get_countries('https://restcountries.eu/rest/v2/all'),
+                                    verbose_name='Страна')
 
     def __str__(self):
         return "{}. {}".format(self.pk, self.title)

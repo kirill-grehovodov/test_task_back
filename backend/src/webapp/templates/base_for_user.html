@@ -12,21 +12,21 @@
 <div>
     <h6>Топ 5 пользователей:</h6>
     {% for user in main_users %}
-        <p>{{ user.username }}</p>
+        <p><a href="{% url 'accounts:user_profile' user.pk %}">{{ user.username }}</a></p>
     {% empty %}
-        <h3>No users</h3>
+        <h3>Нет пользователей</h3>
     {% endfor %}
     <h6>Новые посты:</h6>
     {% for post in main_posts %}
-        <p>{{ post.title }}</p>
+        <p><a href="{% url 'post_view' post.pk %}">{{ post.title }}</a></p>
     {% empty %}
-        <h3>No posts</h3>
+        <h3>Нет постов</h3>
     {% endfor %}
     <h6>Теги:</h6>
     {% for tag in main_tags %}
         <h5>{{ tag.name }}</h5>
     {% empty %}
-        <h3>No tags</h3>
+        <h3>Нет тегов</h3>
     {% endfor %}
 </div>
 {% endblock %}

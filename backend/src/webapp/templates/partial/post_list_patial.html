@@ -1,0 +1,20 @@
+{% if is_paginated %}
+    {% include 'partial/pagination.html' %}
+{% endif %}
+{% if posts %}
+    {% for post in posts %}
+        <div class="card bg-light mb-3">
+            <div class="card-body">
+                <h5 class="card-title font-weight-bold">Заголовок: <a href="{% url 'post_view' post.pk %}">{{ post.title }}</a></h5>
+                <p>Время создания: {{ post.created_at|date:"d.m.Y H:i:s" }}</p>
+                <p>Страна: <a href="{% url 'country_view' post.country_code %}">{{ post.get_country_code_display }}</a></p>
+            </div>
+        </div>
+    {% endfor %}
+{% else %}
+    <h2 class="my-5">Нет постов</h2>
+{% endif %}
+{% if is_paginated %}
+    {% include 'partial/pagination.html' %}
+{% endif %}
+

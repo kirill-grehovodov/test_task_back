@@ -1,0 +1,45 @@
+{% extends 'base_for_user.html' %}
+
+{% block title %}PostView{% endblock %}
+
+{% block menu %}
+{#    {% if perms.webapp.change_article or article.author == request.user %}#}
+{#        <li><a href="{% url 'webapp:article_update' article.pk %}">Update</a></li>#}
+{#    {% endif %}#}
+{#    {% if perms.webapp.delete_article or article.author == request.user %}#}
+{#        <li><a href="{% url 'webapp:article_delete' article.pk %}">Delete</a></li>#}
+{#    {% endif %}#}
+{#    <li><a href="{% url 'webapp:article_comment_add' article.pk %}">Add Comment</a></li>#}
+{% endblock %}
+
+{% block add_content %}
+    <div class="box">
+        <h1>{{ post.title }}</h1>
+        <h4>Страна: <a href="{% url 'country_view' post.country_code %}">{{ post.get_country_code_display }}</a></h4>
+        <p class="pre">Описание: {{ post.text }}</p>
+        <p>Автор:
+            <a href="#">{{ post.author }}</a>
+            | {{ post.created_at|date:"d.m.Y H:i:s" }}
+        </p>
+        <p>Теги: {% for tag in post.tags.all %}{{ tag.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+        <hr>
+        <h3>Комментарии:</h3>
+        {% if is_paginated %}
+            {% include 'partial/pagination.html' %}
+        {% endif %}
+        {% for comment in comments %}
+            <div class="box">
+                <h6>
+                    <a href="#">{{ comment.author }}</a>
+                    ({{ comment.created_at }})
+                </h6>
+                <div class="pre">{{ comment.text }}</div>
+            </div>
+        {% empty %}
+            <p>Нет комментариев</p>
+        {% endfor %}
+        {% if is_paginated %}
+            {% include 'partial/pagination.html' %}
+        {% endif %}
+    </div>
+{% endblock %}

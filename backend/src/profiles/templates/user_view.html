@@ -4,10 +4,11 @@
 
 {% endblock %}
 {% block add_content %}
-    <h3>{{ country.name }}</h3>
-    <h5>Столица {{ country.capital }}</h5>
-    <p>Регион {{ country.region }}</p>
-    <p>Население {{ country.population }}</p>
+    <h3>{{ user.username }}</h3>
+    <h5>Имя: {{ user.first_name }}</h5>
+    <p>Фамилия {{ user.last_name }}</p>
+    <p>Email: {{ user.email }}</p>
+
     <div>{% include 'partial/post_list_patial.html' %}</div>
 
 
