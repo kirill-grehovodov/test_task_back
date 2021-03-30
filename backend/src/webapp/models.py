@@ -1,7 +1,9 @@
 from django.contrib.auth import get_user_model
-from django.core.validators import MinLengthValidator
+from django.core.validators import MinLengthValidator, FileExtensionValidator
 from django.db import models
 import requests
+
+from src.webapp.validators import is_existing_country
 
 
 def get_countries(url):
@@ -27,7 +29,7 @@ class Post(models.Model):
     rating = models.IntegerField(verbose_name="Счётчик лайков", default=0)
     is_locked = models.BooleanField(default=False)
     country_code = models.CharField(max_length=200, choices=get_countries('https://restcountries.eu/rest/v2/all'),
-                                    verbose_name='Страна')
+                                    verbose_name='Страна', validators=[is_existing_country, ])
 
     def __str__(self):
         return "{}. {}".format(self.pk, self.title)
@@ -55,7 +57,7 @@ class Comment(models.Model):
 
 
 class Tag(models.Model):
-    name = models.CharField(max_length=31, verbose_name='Тег')
+    name = models.CharField(max_length=31, verbose_name='Тег', unique=True)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Время создания')
 
     def __str__(self):
@@ -73,7 +75,7 @@ class PostRate(models.Model):
                              related_name='likes', verbose_name='Пост')
 
     def __str__(self):
-        return f'{self.user.username} - {self.article.title}'
+        return f'{self.user.username} - {self.post.title}'
 
     class Meta:
         verbose_name = 'Лайк'
@@ -83,7 +85,8 @@ class PostRate(models.Model):
 class PostImage(models.Model):
     post = models.ForeignKey('webapp.Post', on_delete=models.CASCADE,
                              related_name='images', verbose_name='Пост')
-    image = models.ImageField(upload_to='posts/', blank=True, null=True)
+    image = models.ImageField(upload_to='posts/', blank=True, null=True,
+                              validators=[FileExtensionValidator(['jpg', 'jpeg'])])
 
     class Meta:
         verbose_name = 'Фото'

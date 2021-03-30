@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 
 from src.webapp.models import get_countries
+from src.webapp.validators import is_existing_country
 
 
 class FollowerUser(models.Model):
@@ -28,6 +29,6 @@ class FollowerCountry(models.Model):
         get_user_model(), on_delete=models.CASCADE, related_name='user_countries', verbose_name='Пользователь'
     )
     country = models.CharField(max_length=200, choices=get_countries('https://restcountries.eu/rest/v2/all'),
-                               verbose_name='Страна')
+                               verbose_name='Страна', validators=[is_existing_country, ])
 
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Время создания')
