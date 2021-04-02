@@ -2,8 +2,9 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MinLengthValidator, FileExtensionValidator
 from django.db import models
 import requests
+from django.db.models import Sum
 
-from src.webapp.validators import is_existing_country
+from src.webapp.validators import is_existing_country, rate_check
 
 
 def get_countries(url):
@@ -26,13 +27,18 @@ class Post(models.Model):
     tags = models.ManyToManyField('webapp.Tag', related_name='tags', blank=True, verbose_name='Теги')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Время создания')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Время изменения')
-    rating = models.IntegerField(verbose_name="Счётчик лайков", default=0)
     is_locked = models.BooleanField(default=False)
     country_code = models.CharField(max_length=200, choices=get_countries('https://restcountries.eu/rest/v2/all'),
                                     verbose_name='Страна', validators=[is_existing_country, ])
 
     def __str__(self):
         return "{}. {}".format(self.pk, self.title)
+
+    @property
+    def total_likes(self):
+        rating = sum(list(map(lambda x: x[0], self.likes.values_list('rate'))))
+        print(rating)
+        return rating
 
     class Meta:
         verbose_name = 'Пост'
@@ -73,6 +79,7 @@ class PostRate(models.Model):
                              related_name='post_likes', verbose_name='Пользователь')
     post = models.ForeignKey('webapp.Post', on_delete=models.CASCADE,
                              related_name='likes', verbose_name='Пост')
+    rate = models.IntegerField(default=1, verbose_name='Нравится или нет', validators=[rate_check,])
 
     def __str__(self):
         return f'{self.user.username} - {self.post.title}'

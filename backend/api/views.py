@@ -4,11 +4,12 @@ from rest_framework.response import Response
 from rest_framework import status
 # Create your views here.
 from rest_framework import generics, permissions, views, response, mixins
+from rest_framework.decorators import action, api_view
 
 from api.serializers import ListPostSerializer, ListCommentByPostSerializer, CreateCommentSerializer, \
     ListPostsUserSerializer, CreatePostSerializer
 from src.followers.models import FollowerUser, FollowerTag, FollowerCountry
-from src.webapp.models import Tag, Post, Comment
+from src.webapp.models import Tag, Post, Comment, PostRate
 
 
 class UserView(generics.RetrieveAPIView):
@@ -52,9 +53,38 @@ class CreatePostView(generics.CreateAPIView):
 
 
 class PostView(generics.RetrieveAPIView):
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
     serializer_class = ListCommentByPostSerializer
     queryset = Post.objects.all()
+
+
+@api_view(['POST'])
+def like(request, pk=None):
+    """Лайкает `obj`.
+    """
+    print("like")
+    try:
+        post_rate = PostRate.objects.get(post=pk, user=request.user)
+        post_rate.rate = 1
+        post_rate.save()
+    except PostRate.DoesNotExist:
+        PostRate.objects.create(post=pk, user=request.user, rate=1)
+    # services.add_like(obj, request.user)
+    return Response()
+
+
+@api_view(['POST'])
+def dislike(request, pk=None):
+    """Удаляет лайк с `obj`.
+    """
+    try:
+        post_rate = PostRate.objects.get(post=pk, user=request.user)
+        post_rate.rate = -1
+        post_rate.save()
+    except PostRate.DoesNotExist:
+        PostRate.objects.create(post=pk, user=request.user, rate=-1)
+    # services.remove_like(obj, request.user)
+    return Response()
 
 
 class PostListView(generics.ListAPIView):
@@ -121,3 +151,4 @@ class UserCountryView(views.APIView):
             return response.Response(status=404)
         sub.delete()
         return response.Response(status=204)
+
