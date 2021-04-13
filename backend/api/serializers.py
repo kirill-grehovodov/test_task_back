@@ -30,10 +30,16 @@ class ChoiceDisplayField(ChoiceField):
         }
 
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ("id", "username")
+
+
 class ListPostSerializer(serializers.ModelSerializer):
     serializer_choice_field = ChoiceDisplayField
-    author_name = serializers.ReadOnlyField(source='author.username')
-
+    # author_name = serializers.ReadOnlyField(source='author.username')
+    author = UserSerializer()
     class Meta:
         model = Post
         fields = ("id", "created_at", "author", "author_name", "title", "country_code")
@@ -47,7 +53,7 @@ class TagSerializer(serializers.ModelSerializer):
 
 class PostSerializer(serializers.ModelSerializer):
     serializer_choice_field = ChoiceDisplayField
-    author = serializers.ReadOnlyField(source='author.username')
+    author = UserSerializer()
     tags = TagSerializer(many=True, read_only=True)
     # country_code = ChoiceField(choices=get_countries('https://restcountries.eu/rest/v2/all'))
 
@@ -65,18 +71,18 @@ class CreateCommentSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
 
-    author = serializers.ReadOnlyField(source='author.username', )
+    author = UserSerializer()
 
     class Meta:
         model = Comment
-        fields = ("text", "author", "created_at", "id", "author")
+        fields = ("text", "author", "created_at", "id")
 
 
 class ListCommentByPostSerializer(serializers.ModelSerializer):
     serializer_choice_field = ChoiceDisplayField
     """ Список комментариев
     """
-    author = serializers.ReadOnlyField(source='author.username', )
+    author = UserSerializer()
     comments = CommentSerializer(many=True, read_only=True)
     tags = TagSerializer(many=True, read_only=True)
 
