@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.db.models import Q
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework import status
@@ -8,6 +9,7 @@ from rest_framework.decorators import action, api_view
 
 from api.serializers import ListPostSerializer, ListCommentByPostSerializer, CreateCommentSerializer, \
     ListPostsUserSerializer, CreatePostSerializer
+from api.service import PaginationPosts
 from src.followers.models import FollowerUser, FollowerTag, FollowerCountry
 from src.webapp.models import Tag, Post, Comment, PostRate
 
@@ -16,6 +18,7 @@ class UserView(generics.RetrieveAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = ListPostsUserSerializer
     queryset = User.objects.all()
+    # pagination_class = PaginationPosts
 
 
 class CreateCommentView(generics.CreateAPIView):
@@ -89,9 +92,25 @@ def dislike(request, pk=None):
 
 class PostListView(generics.ListAPIView):
     serializer_class = ListPostSerializer
+    pagination_class = PaginationPosts
 
     def get_queryset(self):
-        return Post.objects.all()
+        queryset = Post.objects.all()
+        user = self.request.user
+        if user.is_authenticated:
+            print("dvdv")
+            users_subscribe_posts = Q(author__subscribers__user__pk=user.pk)
+            users_subscribe_tags = Q(tags__tag_users__user__pk=user.pk)
+            countries_codes = FollowerCountry.objects.filter(user_id=user.pk).values_list("country")
+
+            users_subscribe_countries = Q(country_code__in=countries_codes)
+            my_posts = Q(author__id=user.pk)
+            queryset = queryset.filter(
+                users_subscribe_tags | users_subscribe_posts | users_subscribe_countries).exclude(
+                my_posts).order_by("-created_at").distinct()
+        else:
+            queryset = queryset.order_by("-created_at")[:5]
+        return queryset
 
 
 class FollowerView(views.APIView):

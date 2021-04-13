@@ -1,6 +1,6 @@
 import six
 from django.contrib.auth.models import User
-from rest_framework import serializers
+from rest_framework import serializers, pagination
 from rest_framework.fields import ChoiceField
 
 from src.webapp.models import PostImage, Post, Comment, Tag, get_countries
@@ -31,7 +31,7 @@ class ChoiceDisplayField(ChoiceField):
 
 
 class ListPostSerializer(serializers.ModelSerializer):
-
+    serializer_choice_field = ChoiceDisplayField
     author_name = serializers.ReadOnlyField(source='author.username')
 
     class Meta:
@@ -47,7 +47,6 @@ class TagSerializer(serializers.ModelSerializer):
 
 class PostSerializer(serializers.ModelSerializer):
     serializer_choice_field = ChoiceDisplayField
-
     author = serializers.ReadOnlyField(source='author.username')
     tags = TagSerializer(many=True, read_only=True)
     # country_code = ChoiceField(choices=get_countries('https://restcountries.eu/rest/v2/all'))
@@ -87,11 +86,31 @@ class ListCommentByPostSerializer(serializers.ModelSerializer):
 
 class ListPostsUserSerializer(serializers.ModelSerializer):
 
-    posts = PostSerializer(many=True, read_only=True)
+    posts = serializers.SerializerMethodField('event_posts')
+    pagination = serializers.SerializerMethodField('get_paginated')
+
+    def event_posts(self, obj):
+        posts = Post.objects.filter(author=obj)
+        paginator = pagination.PageNumberPagination()
+        page = paginator.paginate_queryset(posts, self.context['request'])
+        print(paginator.get_next_link())
+        print('page', page)
+        self.paginator = paginator
+        serializer = PostSerializer(page, many=True, context={'request': self.context['request']})
+        return serializer.data
+
+    def get_paginated(self, obj):
+        return ({
+            'links': {
+                'next': self.paginator.get_next_link(),
+                'previous': self.paginator.get_previous_link()
+            },
+            'count': self.paginator.page.paginator.count,
+        })
 
     class Meta:
         model = User
-        fields = ("id", "username",  "email", "posts")
+        fields = ("id", "username",  "email", "posts", "pagination")
 
 
 class PostImageSerializer(serializers.ModelSerializer):
