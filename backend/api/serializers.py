@@ -78,6 +78,7 @@ class ListCommentByPostSerializer(serializers.ModelSerializer):
     """
     author = serializers.ReadOnlyField(source='author.username', )
     comments = CommentSerializer(many=True, read_only=True)
+    tags = TagSerializer(many=True, read_only=True)
 
     class Meta:
         model = Post
@@ -93,8 +94,6 @@ class ListPostsUserSerializer(serializers.ModelSerializer):
         posts = Post.objects.filter(author=obj)
         paginator = pagination.PageNumberPagination()
         page = paginator.paginate_queryset(posts, self.context['request'])
-        print(paginator.get_next_link())
-        print('page', page)
         self.paginator = paginator
         serializer = PostSerializer(page, many=True, context={'request': self.context['request']})
         return serializer.data

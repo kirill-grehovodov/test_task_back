@@ -1,7 +1,7 @@
 from django.urls import path
 
 from api.views import FollowerView, UserCountryView, UserTagView, PostListView, PostView, CreateCommentView, UserView, \
-    CreatePostView, like, dislike
+    CreatePostView, like, dislike, CountryView
 
 urlpatterns = [
     path('follower/<int:pk>/', FollowerView.as_view()),
@@ -14,4 +14,5 @@ urlpatterns = [
     path('user/<int:pk>/', UserView.as_view()),
     path('post/<int:pk>/like/', like),
     path('post/<int:pk>/dislike/', dislike),
+    path('country/<str:code>', CountryView.as_view()),
 ]

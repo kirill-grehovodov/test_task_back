@@ -1,18 +1,38 @@
 from django.contrib.auth.models import User
 from django.db.models import Q
-from django.shortcuts import render
 from rest_framework.response import Response
-from rest_framework import status
-# Create your views here.
-from rest_framework import generics, permissions, views, response, mixins
-from rest_framework.decorators import action, api_view
+from rest_framework import status, pagination
+from rest_framework import generics, permissions, views, response
+from rest_framework.decorators import api_view
+from rest_framework.views import APIView
 
 from api.serializers import ListPostSerializer, ListCommentByPostSerializer, CreateCommentSerializer, \
-    ListPostsUserSerializer, CreatePostSerializer
+    ListPostsUserSerializer, CreatePostSerializer, PostSerializer
 from api.service import PaginationPosts
 from src.followers.models import FollowerUser, FollowerTag, FollowerCountry
 from src.webapp.models import Tag, Post, Comment, PostRate
+import requests
 
+
+class CountryView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        country = requests.get("https://restcountries.eu/rest/v2/alpha/" + self.kwargs.get("code")).json()
+        posts = Post.objects.filter(country_code=self.kwargs.get('code'))
+        print(posts)
+        paginator = pagination.PageNumberPagination()
+        page_posts = paginator.paginate_queryset(posts, request)
+        pagination_json = {
+            'links': {
+                'next': paginator.get_next_link(),
+                'previous': paginator.get_previous_link()
+            },
+            'count': paginator.page.paginator.count,
+        }
+        serializer = PostSerializer(page_posts, many=True)
+        response_result = {'country': country, 'pagination': pagination_json, 'posts': serializer.data}
+        return Response(response_result)
 
 class UserView(generics.RetrieveAPIView):
     permission_classes = [permissions.IsAuthenticated]

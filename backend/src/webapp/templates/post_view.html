@@ -17,6 +17,7 @@
         <h1>{{ post.title }}</h1>
         <h4>Страна: <a href="{% url 'country_view' post.country_code %}">{{ post.get_country_code_display }}</a></h4>
         <p class="pre">Описание: {{ post.text }}</p>
+        <p>Рейтинг: {{ post.total_likes }}</p>
         <p>Автор:
             <a href="#">{{ post.author }}</a>
             | {{ post.created_at|date:"d.m.Y H:i:s" }}

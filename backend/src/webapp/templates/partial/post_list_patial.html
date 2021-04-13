@@ -3,7 +3,6 @@
 {% endif %}
 {% if posts %}
     {% for post in posts %}
-        {{ post.total_likes }}
         <div class="card bg-light mb-3">
             <div class="card-body">
                 <h5 class="card-title font-weight-bold">Заголовок: <a href="{% url 'post_view' post.pk %}">{{ post.title }}</a></h5>
