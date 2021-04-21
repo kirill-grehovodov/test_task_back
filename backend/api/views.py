@@ -118,7 +118,6 @@ class PostListView(generics.ListAPIView):
         queryset = Post.objects.all()
         user = self.request.user
         if user.is_authenticated:
-            print("dvdv")
             users_subscribe_posts = Q(author__subscribers__user__pk=user.pk)
             users_subscribe_tags = Q(tags__tag_users__user__pk=user.pk)
             countries_codes = FollowerCountry.objects.filter(user_id=user.pk).values_list("country")

@@ -37,7 +37,6 @@ class Post(models.Model):
     @property
     def total_likes(self):
         rating = sum(list(map(lambda x: x[0], self.likes.values_list('rate'))))
-        print(rating)
         return rating
 
     class Meta:

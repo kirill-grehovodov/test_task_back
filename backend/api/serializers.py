@@ -14,6 +14,7 @@ from src.webapp.models import PostImage, Post, Comment, Tag, get_countries
 class StringListField(serializers.ListField):
     child = serializers.CharField()
 
+
 class ChoiceDisplayField(ChoiceField):
     def __init__(self, *args, **kwargs):
         super(ChoiceDisplayField, self).__init__(*args, **kwargs)
@@ -40,9 +41,10 @@ class ListPostSerializer(serializers.ModelSerializer):
     serializer_choice_field = ChoiceDisplayField
     # author_name = serializers.ReadOnlyField(source='author.username')
     author = UserSerializer()
+
     class Meta:
         model = Post
-        fields = ("id", "created_at", "author", "author_name", "title", "country_code")
+        fields = ("id", "created_at", "author", "title", "country_code")
 
 
 class TagSerializer(serializers.ModelSerializer):
