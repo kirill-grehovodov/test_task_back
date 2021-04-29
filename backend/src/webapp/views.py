@@ -5,6 +5,7 @@ from django.db.models import Q
 
 from django.views.generic import ListView, DetailView
 
+from api.constans import PAGINATION_PAGE_COUNT
 from src.followers.models import FollowerCountry
 from src.webapp.models import Post, get_countries
 
@@ -17,7 +18,7 @@ class IndexView(ListView):
     template_name = 'index.html'
     model = Post
     context_object_name = 'posts'
-    paginate_by = 5
+    paginate_by = PAGINATION_PAGE_COUNT
     ordering = ['-created_at']
 
     def get_context_data(self, *, object_list=None, **kwargs):
@@ -43,7 +44,7 @@ class IndexView(ListView):
                 users_subscribe_tags | users_subscribe_posts | users_subscribe_countries).exclude(
                 my_posts).distinct()
         else:
-            queryset = queryset[:5]
+            queryset = queryset[:PAGINATION_PAGE_COUNT]
         return queryset
 
 
@@ -51,7 +52,7 @@ class CountryView(LoginRequiredMixin, ListView):
     template_name = 'country.html'
     model = Post
     context_object_name = 'posts'
-    paginate_by = 5
+    paginate_by = PAGINATION_PAGE_COUNT
     ordering = ['-created_at']
     login_url = 'accounts:login'
 

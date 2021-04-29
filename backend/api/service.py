@@ -1,11 +1,12 @@
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
+from api.constans import PAGINATION_PAGE_COUNT
 from src.webapp.models import Post
 
 
 class PaginationPosts(PageNumberPagination):
-    page_size = 2
+    page_size = PAGINATION_PAGE_COUNT
     max_page_size = 1000
 
     def get_paginated_response(self, data):

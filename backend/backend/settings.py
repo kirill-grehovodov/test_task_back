@@ -13,7 +13,7 @@ import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-
+from api.constans import PAGINATION_PAGE_COUNT
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -136,7 +136,7 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'PAGE_SIZE': 2
+    'PAGE_SIZE': PAGINATION_PAGE_COUNT
 }
 
 

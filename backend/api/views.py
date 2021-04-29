@@ -6,6 +6,7 @@ from rest_framework import generics, permissions, views, response
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 
+from api.constans import PAGINATION_PAGE_COUNT
 from api.serializers import ListPostSerializer, ListCommentByPostSerializer, CreateCommentSerializer, \
     ListPostsUserSerializer, CreatePostSerializer, PostSerializer
 from api.service import PaginationPosts
@@ -20,7 +21,6 @@ class CountryView(APIView):
     def get(self, request, *args, **kwargs):
         country = requests.get("https://restcountries.eu/rest/v2/alpha/" + self.kwargs.get("code")).json()
         posts = Post.objects.filter(country_code=self.kwargs.get('code'))
-        print(posts)
         paginator = pagination.PageNumberPagination()
         page_posts = paginator.paginate_queryset(posts, request)
         pagination_json = {
@@ -31,7 +31,7 @@ class CountryView(APIView):
             'count': paginator.page.paginator.count,
         }
         serializer = PostSerializer(page_posts, many=True)
-        response_result = {'country': country, 'pagination': pagination_json, 'posts': serializer.data}
+        response_result = {'country': country, 'links': pagination_json, 'results': serializer.data}
         return Response(response_result)
 
 class UserView(generics.RetrieveAPIView):
@@ -121,14 +121,13 @@ class PostListView(generics.ListAPIView):
             users_subscribe_posts = Q(author__subscribers__user__pk=user.pk)
             users_subscribe_tags = Q(tags__tag_users__user__pk=user.pk)
             countries_codes = FollowerCountry.objects.filter(user_id=user.pk).values_list("country")
-
             users_subscribe_countries = Q(country_code__in=countries_codes)
             my_posts = Q(author__id=user.pk)
             queryset = queryset.filter(
                 users_subscribe_tags | users_subscribe_posts | users_subscribe_countries).exclude(
                 my_posts).order_by("-created_at").distinct()
         else:
-            queryset = queryset.order_by("-created_at")[:5]
+            queryset = queryset.order_by("-created_at")[:PAGINATION_PAGE_COUNT]
         return queryset
 
 
