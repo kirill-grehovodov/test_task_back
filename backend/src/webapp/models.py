@@ -1,9 +1,13 @@
 from django.contrib.auth import get_user_model
 from django.core.validators import MinLengthValidator, FileExtensionValidator
-from django.db import models
-import requests
-from django.db.models import Sum
 
+import requests
+
+import os
+
+
+from django.db import models
+from django.dispatch import receiver
 from src.webapp.validators import is_existing_country, rate_check
 
 
@@ -92,8 +96,19 @@ class PostImage(models.Model):
     post = models.ForeignKey('webapp.Post', on_delete=models.CASCADE,
                              related_name='images', verbose_name='Пост')
     image = models.ImageField(upload_to='posts/', blank=True, null=True,
-                              validators=[FileExtensionValidator(['jpg', 'jpeg'])])
+                              validators=[FileExtensionValidator(['jpg', 'jpeg', 'png'])])
 
     class Meta:
         verbose_name = 'Фото'
         verbose_name_plural = 'Фото'
+
+
+@receiver(models.signals.post_delete, sender=PostImage)
+def auto_delete_file_on_delete(sender, instance, **kwargs):
+    """
+    Deletes file from filesystem
+    when corresponding 'MediaFile' object is deleted.
+    """
+    if instance.image:
+        if os.path.isfile(instance.image.path):
+            os.remove(instance.image.path)

@@ -129,23 +129,22 @@ class PostImageSerializer(serializers.ModelSerializer):
 
 class CreatePostSerializer(serializers.ModelSerializer):
     images = PostImageSerializer(source='image_set', many=True, read_only=True)
-    tags = StringListField()
+    tags = StringListField(required=False)
 
     class Meta:
         model = Post
-        fields = ('title', 'images', 'text', 'tags', 'country_code')
+        fields = ('title', 'images', 'text', 'tags', 'country_code',)
 
     def create(self, validated_data):
         images_data = self.context.get('view').request.FILES
-        if len(images_data.getlist('images')) > 10:
-            raise serializers.ValidationError("Картинок может быть максимум 10")
-        for img in images_data.getlist('images'):
-            print(img.name)
-            if img.name.split('.')[1] not in ['jpg', 'jpeg']:
-                raise serializers.ValidationError("Неверный формат картинки")
-            print(img.size)
-            if img.size > 5242880:
-                raise serializers.ValidationError("Размер картинки превышает 5mb")
+        if images_data:
+            if len(images_data.getlist('images')) > 10:
+                raise serializers.ValidationError(detail="Картинок может быть максимум 10")
+            for img in images_data.getlist('images'):
+                if img.name.split('.')[1] not in ['jpg', 'jpeg', 'png']:
+                    raise serializers.ValidationError("Неверный формат картинки")
+                if img.size > 5242880:
+                    raise serializers.ValidationError("Размер картинки превышает 5mb")
 
         tags = validated_data.get('tags')
         post = Post.objects.create(title=validated_data.get('title'),
@@ -160,6 +159,7 @@ class CreatePostSerializer(serializers.ModelSerializer):
                     Tag.objects.create(name=tag)
             post_tags = Tag.objects.filter(name__in=tags)
             post.tags.set(list(post_tags))
-        for image_data in images_data.values():
-            PostImage.objects.create(post=post, image=image_data)
+        if images_data:
+            for image_data in images_data.values():
+                PostImage.objects.create(post=post, image=image_data)
         return {"id": post.id}

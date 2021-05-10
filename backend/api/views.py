@@ -34,6 +34,7 @@ class CountryView(APIView):
         response_result = {'country': country, 'links': pagination_json, 'results': serializer.data}
         return Response(response_result)
 
+
 class UserView(generics.RetrieveAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = ListPostsUserSerializer
@@ -57,23 +58,23 @@ class CreateCommentView(generics.CreateAPIView):
         serializer.save(author=self.request.user, post=self.post)
 
 
-
 class CreatePostView(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     queryset = Post.objects.all()
     serializer_class = CreatePostSerializer
 
     def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
+        return serializer.save(author=self.request.user)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        # headers = self.get_success_headers(serializer.data)
-
-        return Response(status=status.HTTP_201_CREATED)
-
+        if serializer.is_valid():
+            data = self.perform_create(serializer)
+            # headers = self.get_success_headers(serializer.data)
+            return Response(data=data, status=status.HTTP_201_CREATED)
+        else:
+            data = serializer.errors
+            return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
 
 class PostView(generics.RetrieveAPIView):
     # permission_classes = [permissions.IsAuthenticated]
