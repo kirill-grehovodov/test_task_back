@@ -21,7 +21,6 @@ class CountryView(APIView):
 
     def get(self, request, *args, **kwargs):
         country = requests.get("https://restcountries.eu/rest/v2/alpha/" + self.kwargs.get("code")).json()
-        print(country)
         posts = Post.objects.filter(country_code=self.kwargs.get('code'))
         paginator = pagination.PageNumberPagination()
         page_posts = paginator.paginate_queryset(posts, request)
