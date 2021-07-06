@@ -103,7 +103,7 @@ class AllPostsViewTest(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Token {0}'.format(self.token))
         response = self.client.get('/api/posts/?page=2')
         self.assertTrue(len(response.data['results']) == PAGINATION_PAGE - PAGINATION_PAGE_COUNT)
-        response = self.client.get('/api/country/RU')
+        response = self.client.get('/api/country/RU/')
         self.assertEqual(200, response.status_code)
         self.assertTrue('links' in response.data)
         self.assertTrue('country' in response.data)
