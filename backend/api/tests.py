@@ -125,6 +125,7 @@ class CommentCreateViewTest(APITestCase):
                                         country_code='RU', )
         self.client.credentials(HTTP_AUTHORIZATION='Token {0}'.format(self.token))
 
+
     def tearDown(self):
         self.user.delete()
         self.post.delete()
