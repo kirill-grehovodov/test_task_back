@@ -12,7 +12,7 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     strategy:
       fail-fast: false
       matrix:
@@ -27,7 +27,7 @@ jobs:
     - name: Tests
       run: |
         python -m venv venv
-        venv/Scripts/Activate.ps1
+        venv\Scripts\Activate.ps1
         pip install -r requirements.txt
         cd backend
         manage.py test
