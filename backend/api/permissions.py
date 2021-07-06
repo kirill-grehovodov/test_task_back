@@ -10,7 +10,6 @@ class FixPermission(permissions.BasePermission):
             # if view.action == 'retrieve':
             #     return request.user.has_perms('fix_an_appointment')
 
-
         return True
 
     def has_object_permission(self, request, view, obj):
