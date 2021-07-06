@@ -7,6 +7,7 @@ from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 
 from api.constans import PAGINATION_PAGE_COUNT
+from api.permissions import FixPermission
 from api.serializers import ListPostSerializer, ListCommentByPostSerializer, CreateCommentSerializer, \
     ListPostsUserSerializer, CreatePostSerializer, PostSerializer
 from api.service import PaginationPosts
@@ -16,10 +17,11 @@ import requests
 
 
 class CountryView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [FixPermission]
 
     def get(self, request, *args, **kwargs):
         country = requests.get("https://restcountries.eu/rest/v2/alpha/" + self.kwargs.get("code")).json()
+        print(country)
         posts = Post.objects.filter(country_code=self.kwargs.get('code'))
         paginator = pagination.PageNumberPagination()
         page_posts = paginator.paginate_queryset(posts, request)

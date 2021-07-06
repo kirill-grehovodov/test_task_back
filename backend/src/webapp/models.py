@@ -7,6 +7,7 @@ import os
 
 
 from django.db import models
+from django.db.models import Sum
 from django.dispatch import receiver
 from src.webapp.validators import is_existing_country, rate_check
 
@@ -82,7 +83,7 @@ class PostRate(models.Model):
                              related_name='post_likes', verbose_name='Пользователь')
     post = models.ForeignKey('webapp.Post', on_delete=models.CASCADE,
                              related_name='likes', verbose_name='Пост')
-    rate = models.IntegerField(default=1, verbose_name='Нравится или нет', validators=[rate_check,])
+    rate = models.IntegerField(default=1, verbose_name='Нравится или нет', validators=[rate_check])
 
     def __str__(self):
         return f'{self.user.username} - {self.post.title}'

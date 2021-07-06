@@ -14,5 +14,5 @@ urlpatterns = [
     path('user/<int:pk>/', UserView.as_view()),
     path('post/<int:pk>/like/', like),
     path('post/<int:pk>/dislike/', dislike),
-    path('country/<str:code>', CountryView.as_view()),
+    path('country/<str:code>/', CountryView.as_view()),
 ]
