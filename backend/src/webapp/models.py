@@ -49,7 +49,6 @@ class Post(models.Model):
         verbose_name_plural = 'Посты'
 
 
-
 class Comment(models.Model):
     post = models.ForeignKey('webapp.Post', related_name='comments',
                              on_delete=models.CASCADE, verbose_name='Пост')

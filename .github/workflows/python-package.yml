@@ -27,7 +27,7 @@ jobs:
     - name: Tests
       run: |
         python -m venv venv
-        venv\bin\Activate
+        venv/Scripts/activate
         pip install -r requirements.txt
         cd backend
         manage.py test
